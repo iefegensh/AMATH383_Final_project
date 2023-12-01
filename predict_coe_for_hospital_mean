@@ -1,0 +1,24 @@
+import numpy as np
+from scipy.optimize import curve_fit
+import pandas as pd
+
+# Assuming 'data.csv' has a column 'H' with your H values
+data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd3.csv')  # Replace with your CSV file path
+H_values = data['hospital_beds_mean'].values
+
+# Prepare the data for regression
+# H_k (current value) as X, and H_{k+1} (next value) as y
+X = H_values[:-1]
+y = H_values[1:]
+
+# Define the model function
+def model_function(H_k, a, b):
+    return a * H_k + b * H_k**2
+
+# Perform the non-linear regression
+params, params_covariance = curve_fit(model_function, X, y)
+
+# Extract the optimized parameters a and b
+a_opt, b_opt = params
+
+print(f"Optimized parameters: a = {a_opt}, b = {b_opt}")
