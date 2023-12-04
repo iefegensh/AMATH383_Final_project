@@ -1,25 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Initial values and parameters
 H0 = 134.23
-a = 1.2046974972789675
-b = -2.9850632020829475 * 10**(-6)
-
-# Generating the predicted values
+a = -73.94261294332631
+b = 1.2389006279320247
+c = -2.49885417520337e-06
+d = -5.828273397340896e-12
+e = 946.9485783245336
+f = -1227.393250676133
 H = [H0]
-for i in range(60):
-    H0 = a * H0 + b * H0**2
+for i in range(120):
+    H0 = a * (i+1) + b * H0 + c * H0**2 + d *H0**3 + e + f/(i+1)
     H.append(H0)
 
-# Load the actual data
-data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd3.csv')
+data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd4.csv')
 data['sequential_number'] = range(1, len(data) + 1)
 
-# Plotting
+
 plt.figure(figsize=(10, 6))
 plt.scatter(data['sequential_number'], data['hospital_beds_mean'], label='Original Data')
-plt.plot(range(61), H, color='green', label='Model Prediction')
+plt.plot(range(121), H, color='green', label='Model Prediction')
 plt.title('Hospital Beds Mean Over Time')
 plt.xlabel('Sequential Number')
 plt.ylabel('Hospital Beds Mean')
