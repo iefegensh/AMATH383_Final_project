@@ -2,17 +2,18 @@ import numpy as np
 from scipy.optimize import curve_fit
 import pandas as pd
 
-data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd3.csv')  # Replace with your CSV file path
-H_values = data['cumulative_cases'].values
+data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd3.csv')
+X = data['sequential_number'].values[:-1]
+y = data['cumulative_cases'].values[1:]
 
-X = H_values[:-1]
-y = H_values[1:]
+def model_function(X, a, b, c, d, e):
+    k = X
+    H_k = data['cumulative_cases'].values[:-1]
+    return a * k + b * H_k + c * H_k**2 + d + e*k**2
 
-def model_function(H_k, a, b,c,d):
-    return a * H_k + b * H_k**2 + c*H_k**3+d*H_k**4
+initial_guess = [100, -111, 12.2, -33, 1]
 
-params, params_covariance = curve_fit(model_function, X, y)
+params_opt, params_cov = curve_fit(model_function, X, y, p0=initial_guess)
 
-a_opt, b_opt, c_opt,d_opt= params
-
-print(f"Optimized parameters: a = {a_opt}, b = {b_opt}, {c_opt},{d_opt}")
+a_opt, b_opt, c_opt, d_opt, e= params_opt
+print(f"Optimized parameters: a = {a_opt}, b = {b_opt}, c = {c_opt}, d = {d_opt},  {e}")
