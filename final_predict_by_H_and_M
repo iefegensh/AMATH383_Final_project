@@ -1,0 +1,78 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+file_path = 'C:/Users/86130/Desktop/AMATH383/project/ddd3.csv'
+data = pd.read_csv(file_path)
+data2 = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd4.csv')
+M0 = 393
+a = -1178.9001075514389
+b = 0.9715115940005915
+c = -1.1170050746589687e-07
+d = 3987.5205192166845
+e = 64.60294990167476
+M = [M0]
+for i in range(60):
+    M0 = a * (i+1) + b * M0 + c * M0**2 + d + e*(i+1)**2
+    M.append(M0)
+
+M0= 393
+Mf = [M0]
+for i in range(120):
+    M0 = a * (i+1) + b * M0 + c * M0**2 + d + e*(i+1)**2
+    Mf.append(M0)
+
+H0 = 134.23
+temp = H0
+a = -73.94261294332631
+b = 1.2389006279320247
+c = -2.49885417520337e-06
+d = -5.828273397340896e-12
+e = 946.9485783245336
+f = -1227.393250676133
+H = [H0]
+for i in range(60):
+    H0 = a * (i+1) + b * H0 + c * H0**2 + d *H0**3 + e + f/(i+1)
+    H.append(H0)
+
+H0 = 134.23
+Hf = [H0]
+for i in range(120):
+    H0 = a * (i+1) + b * H0 + c * H0**2 + d *H0**3 + e + f/(i+1)
+    Hf.append(H0)
+
+
+
+
+
+
+data['M'] = M
+data['H'] = H
+feature_columns = ['M', 'H']
+target_column = 'cumulative_deaths'
+X = data[feature_columns]
+y = data[target_column]
+
+model = LinearRegression()
+model.fit(X, y)
+
+data_for_prediction = pd.DataFrame({'M': Mf, 'H': Hf})
+input_data = data_for_prediction[["M", "H"]]
+
+predictions = model.predict(input_data)
+
+data_for_prediction['Predicted_Deaths'] = predictions
+
+data = pd.read_csv('C:/Users/86130/Desktop/AMATH383/project/ddd4.csv')
+data['sequential_number'] = range(1, len(data) + 1)
+plt.figure(figsize=(10, 6))
+plt.scatter(data['sequential_number'], data['cumulative_deaths'], label='Original Data')
+plt.plot(range(121), predictions, color='green', label='Model Prediction')
+plt.title('cumulative_deaths Over Time')
+plt.xlabel('Sequential Number')
+plt.ylabel('cumulative_deaths')
+plt.legend()
+plt.grid(True)
+plt.show()
